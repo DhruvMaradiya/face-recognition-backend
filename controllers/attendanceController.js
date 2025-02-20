@@ -1,11 +1,11 @@
-const User = require('../models/user');
+const User = require('../models/User');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
 
 exports.markAttendance = async (req, res) => {
   try {
     const { userId, eventId, faceEmbedding, coordinates } = req.body;
-    
+
     // 1. Verify face embedding
     const user = await User.findById(userId);
     const similarity = cosineSimilarity(user.faceEmbedding, faceEmbedding);
@@ -28,7 +28,7 @@ exports.markAttendance = async (req, res) => {
         }
       }
     ]);
-    
+
     if (distance[0].distance > event.radius) {
       return res.status(400).json({ error: 'Outside allowed radius' });
     }
@@ -36,10 +36,10 @@ exports.markAttendance = async (req, res) => {
     // 4. Check time constraints
     const now = new Date();
     const bufferEnd = new Date(event.endTime.getTime() + event.bufferMinutes * 60000);
-    
+
     let status = 'absent';
     let lateMinutes = 0;
-    
+
     if (now <= event.endTime) {
       status = 'present';
     } else if (now <= bufferEnd) {

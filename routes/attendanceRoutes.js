@@ -11,3 +11,4 @@ router.get('/report', adminController.generateReport);
 router.patch('/modify-attendance', adminController.modifyAttendance);
 
 module.exports = router;
+

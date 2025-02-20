@@ -5,6 +5,7 @@ const cors = require('cors');  // Import CORS
 const app = express();
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const authRoutes = require('./routes/authRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 // Middleware
 app.use(cors());  // Enable CORS
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/auth', authRoutes);
+app.use(eventRoutes)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

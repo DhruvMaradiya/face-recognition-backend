@@ -16,7 +16,7 @@ exports.signup = async (req, res) => {
     // Hash the password before saving
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
+
     // Create new User
 
     const user = await User.create({
@@ -26,7 +26,7 @@ exports.signup = async (req, res) => {
       password: hashedPassword, // Store hashed password
       role: role || 'student'
     })
- 
+
 
     await user.save();
 
@@ -39,7 +39,7 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ token, User: { id: user._id, email: user.email, role: user.role } });
   } catch (error) {
-  
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -48,7 +48,7 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     // Find User by email
     const user = await User.findOne({ email });
     if (!user) {
@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
 
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-    
+
     if (!isMatch) {
       return res.status(401).json({ error: 'Password Does not Match' });
     }
@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
 
     res.json({ token, User: { id: user._id, email: user.email, role: user.role } });
   } catch (error) {
-    
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
