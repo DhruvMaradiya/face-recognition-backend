@@ -4,7 +4,8 @@ import Home from "./pages/Home";
 import CreateEvent from "./pages/CreateEvent";
 import Navbar from "./components/Navbar";
 import EventDetails from "./components/EventDetails";
-
+import StudentsList from "./pages/StudentsList";
+import StudentDetails from "./pages/StudentDetails";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<CreateEvent />} />
         <Route path="/admin/event/:id" element={<EventDetails />} />
+        <Route path="/students" element={<StudentsList />} />
+        <Route path="/student/:id" element={<StudentDetails />} />
       </Routes>
     </Router>
   );

@@ -44,6 +44,50 @@ const parseCSV = (filePath) => {
 
 
 
+// exports.createEvent = async (req, res) => {
+//     try {
+//         let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;
+
+//         // Convert creator email to ObjectId
+//         const creatorUser = await User.findOne({ email: creator });
+//         if (!creatorUser) {
+//             return res.status(400).json({ error: "Creator email not found" });
+//         }
+
+//         // Convert student emails to ObjectIds
+//         const students = await User.find({ email: { $in: registeredStudents } }, "_id");
+//         if (students.length !== registeredStudents.length) {
+//             return res.status(400).json({ error: "One or more student emails not found" });
+//         }
+
+//         // Extract ObjectIds
+//         const studentIds = students.map(student => student._id);
+
+//         // Ensure location coordinates are numbers
+//         if (!Array.isArray(location.coordinates) || location.coordinates.length !== 2) {
+//             return res.status(400).json({ error: "Invalid location coordinates format" });
+//         }
+
+//         const newEvent = new Event({
+//             name,
+//             description,
+//             startTime,
+//             endTime,
+//             location,
+//             radius,
+//             bufferMinutes,
+//             creator: creatorUser._id, // Store as ObjectId
+//             registeredStudents: studentIds
+//         });
+
+//         await newEvent.save();
+//         res.status(201).json(newEvent);
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+
 exports.createEvent = async (req, res) => {
     try {
         let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;
@@ -68,6 +112,7 @@ exports.createEvent = async (req, res) => {
             return res.status(400).json({ error: "Invalid location coordinates format" });
         }
 
+        // Create the event
         const newEvent = new Event({
             name,
             description,
@@ -81,11 +126,19 @@ exports.createEvent = async (req, res) => {
         });
 
         await newEvent.save();
-        res.status(201).json(newEvent);
+
+        // ✅ Update `registeredEvents` for each student
+        await User.updateMany(
+            { _id: { $in: studentIds } }, 
+            { $push: { registeredEvents: newEvent._id } } // Push event ID to registeredEvents array
+        );
+
+        res.status(201).json({ message: "Event created successfully", event: newEvent });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 // ✅ Get Event Details
