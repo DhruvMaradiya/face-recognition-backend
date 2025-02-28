@@ -157,17 +157,33 @@ exports.getEvent = async (req, res) => {
 };
 
 // ✅ Edit Event
-exports.updateEvent = async (req, res) => {
+// exports.updateEvent = async (req, res) => {
+//     try {
+//         const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+//         if (!updatedEvent) return res.status(404).json({ message: "Event not found" });
+
+//         res.json({ message: "Event updated successfully", event: updatedEvent });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+exports.getEvent = async (req, res) => {
     try {
-        const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const event = await Event.findById(req.params.id)
+            .populate('creator', 'fullName email') // Populate creator details
+            .populate('registeredStudents', 'fullName email'); // Populate student details
 
-        if (!updatedEvent) return res.status(404).json({ message: "Event not found" });
+        if (!event) return res.status(404).json({ message: "Event not found" });
 
-        res.json({ message: "Event updated successfully", event: updatedEvent });
+        res.json(event);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
+
 
 // ✅ Delete Event
 exports.deleteEvent = async (req, res) => {

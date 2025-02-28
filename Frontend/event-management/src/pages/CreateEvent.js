@@ -63,8 +63,8 @@ const CreateEvent = () => {
             <input type="number" name="radius" placeholder="Radius (meters)" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
             <input type="number" name="bufferMinutes" placeholder="Buffer Minutes" onChange={handleChange} className="w-full p-2 border rounded mb-2" />
             <input type="email" name="creator" placeholder="Creator Email" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
-            <input type="number" name="latitude" placeholder="Latitude" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
-            <input type="number" name="longitude" placeholder="Longitude" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
+            <input type="text" name="latitude" placeholder="Latitude" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
+            <input type="text" name="longitude" placeholder="Longitude" onChange={handleChange} required className="w-full p-2 border rounded mb-2" />
             <input type="file" accept=".csv" onChange={handleCSVUpload} className="w-full p-2 border rounded mb-2" />
             <button type="submit" className="bg-blue-600 text-white w-full py-2 rounded">Create Event</button>
         </form>
