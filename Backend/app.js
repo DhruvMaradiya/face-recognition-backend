@@ -5,8 +5,10 @@ const cors = require('cors');  // Import CORS
 const app = express();
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const authRoutes = require('./routes/authRoutes');
+const profileRoutes = require('./routes/profileRoutes')
 const eventRoutes = require('./routes/eventRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const uploadRoutes = require('./routes/uploadRoutes')
 
 // Middleware
 app.use(cors());  // Enable CORS
@@ -20,6 +22,8 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/profile',profileRoutes)
+app.use("/api", uploadRoutes)
 app.use(eventRoutes)
 app.use(studentRoutes)
 

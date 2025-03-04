@@ -169,20 +169,26 @@ exports.getEvent = async (req, res) => {
 //     }
 // };
 
-exports.getEvent = async (req, res) => {
+exports.updateEvent = async (req, res) => {
     try {
-        const event = await Event.findById(req.params.id)
-            .populate('creator', 'fullName email') // Populate creator details
-            .populate('registeredStudents', 'fullName email'); // Populate student details
+        const { registeredStudents, ...otherData } = req.body;
 
-        if (!event) return res.status(404).json({ message: "Event not found" });
+        // Convert emails to ObjectIds
+        const students = await User.find({ email: { $in: registeredStudents } }, "_id");
+        const studentIds = students.map(student => student._id);
 
-        res.json(event);
+        const updatedEvent = await Event.findByIdAndUpdate(req.params.id, {
+            ...otherData,
+            registeredStudents: studentIds,
+        }, { new: true });
+
+        if (!updatedEvent) return res.status(404).json({ message: "Event not found" });
+
+        res.json(updatedEvent);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
 
 
 // ✅ Delete Event
