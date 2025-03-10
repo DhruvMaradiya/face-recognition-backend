@@ -3,25 +3,36 @@ import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import { Trash2, Eye } from 'lucide-react';
 
+
 const useQuery = () => new URLSearchParams(useLocation().search);
 
+
 const Home = () => {
+
+    //? Setting parameters for use state
+
     const [events, setEvents] = useState({ ongoing: [], upcoming: [], past: [] });
     const [expandedCategory, setExpandedCategory] = useState(null); // Track expanded category
+
+    //? For Searching Events
     const query = useQuery();
     const searchTerm = query.get("search")?.toLowerCase() || "";
 
+    //? Use effect to get events
     useEffect(() => {
         axios.get("http://localhost:5000/admin/events")
             .then((res) => setEvents(res.data))
             .catch((err) => console.error(err));
     }, []);
 
+    //? Filter events based on search term
     const filterEvents = (events) => {
         if (!searchTerm) return events;
         return events.filter(event => event.name.toLowerCase().includes(searchTerm));
     };
 
+
+    //! Function to delete event
     const handleDeleteEvent = async (eventId) => {
         try {
             await axios.delete(`http://localhost:5000/admin/event/${eventId}`);
@@ -38,6 +49,7 @@ const Home = () => {
         }
     };
 
+    //? Function to render event item
     const renderEventItem = (event, category) => (
         <li
             key={event._id}
@@ -84,6 +96,8 @@ const Home = () => {
         </li>
     );
 
+
+    //? Function to render events list
     const renderEventsList = (category) => {
         const filteredEvents = filterEvents(events[category]);
         return (
