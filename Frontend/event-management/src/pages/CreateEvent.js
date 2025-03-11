@@ -329,25 +329,40 @@ const CreateEvent = () => {
   const [error, setError] = useState("");
   const [showTimePicker, setShowTimePicker] = useState({ start: false, end: false });
 
+  // const handleCSVUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   if (!file) return;
+
+  //   Papa.parse(file, {
+  //     complete: (result) => {
+  //       const emails = result.data
+  //         .slice(1)
+  //         .map((row) => row[2]?.trim())
+  //         .filter(email => email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         registeredStudents: [...new Set(emails)]
+  //       }));
+  //     },
+  //     header: false
+  //   });
+  // };
+
+
+
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     Papa.parse(file, {
-      complete: (result) => {
-        const emails = result.data
-          .slice(1)
-          .map((row) => row[2]?.trim())
-          .filter(email => email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-
-        setFormData((prev) => ({
-          ...prev,
-          registeredStudents: [...new Set(emails)]
-        }));
-      },
-      header: false
+        complete: (result) => {
+            const emails = result.data.map((row) => row[2]).filter(email => email);
+            setFormData((prev) => ({ ...prev, registeredStudents: emails }));
+        },
     });
-  };
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
