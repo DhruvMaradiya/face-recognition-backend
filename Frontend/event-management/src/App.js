@@ -48,7 +48,8 @@ import StudentsList from "./pages/StudentsList"; //~ students list page
 import StudentDetails from "./pages/StudentDetails"; //~ student details page
 import Footer from "./components/Footer";
 import CalendarView from "./pages/CalendarView";
-import ReportPage from "./pages/ReportPage";
+import ReportPage from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -66,7 +67,7 @@ const App = () => {
             <Route path="/students" element={<StudentsList />} />
             <Route path="/student/:id" element={<StudentDetails />} />
             <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/report" element={<ReportPage />}></Route>
+            <Route path="/report" element={<Dashboard />}></Route>
           </Routes>
         </main>
 
