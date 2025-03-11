@@ -9,6 +9,8 @@ const profileRoutes = require('./routes/profileRoutes')
 const eventRoutes = require('./routes/eventRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes')
+const dashboardRoutes = require('./routes/dashboardRoutes');
+
 
 // Middleware
 app.use(cors());  // Enable CORS
@@ -22,10 +24,11 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/profile',profileRoutes)
+app.use('/api/profile', profileRoutes)
 app.use("/api", uploadRoutes)
 app.use(eventRoutes)
 app.use(studentRoutes)
+app.use(dashboardRoutes)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

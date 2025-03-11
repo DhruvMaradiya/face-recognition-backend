@@ -129,7 +129,7 @@ exports.createEvent = async (req, res) => {
 
         // ✅ Update `registeredEvents` for each student
         await User.updateMany(
-            { _id: { $in: studentIds } }, 
+            { _id: { $in: studentIds } },
             { $push: { registeredEvents: newEvent._id } } // Push event ID to registeredEvents array
         );
 
