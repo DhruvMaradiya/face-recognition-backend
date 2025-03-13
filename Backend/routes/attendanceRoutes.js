@@ -9,6 +9,8 @@ router.post('/mark-attendance', attendanceController.markAttendance);
 // Admin routes
 router.get('/report', adminController.generateReport);
 router.patch('/modify-attendance', adminController.modifyAttendance);
+router.get('/attendance/report', attendanceController.generateAttendanceReport);
+
 
 module.exports = router;
 

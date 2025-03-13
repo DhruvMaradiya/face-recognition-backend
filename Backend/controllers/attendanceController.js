@@ -70,3 +70,52 @@ function cosineSimilarity(a, b) {
   const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
   return dotProduct / (magnitudeA * magnitudeB);
 }
+
+
+
+exports.generateAttendanceReport = async (req, res) => {
+    try {
+        // Fetch all students
+        const students = await User.find({ role: 'student' });
+
+        // Fetch all events
+        const events = await Event.find({}, '_id name'); // Only fetch event IDs & names
+
+        // Fetch attendance records
+        const attendanceRecords = await Attendance.find();
+
+        // Create event columns dynamically
+        const eventMap = events.reduce((acc, event) => {
+            acc[event._id.toString()] = event.name;
+            return acc;
+        }, {});
+
+        // Prepare spreadsheet-style data
+        const report = students.map((student) => {
+            // Find this student's attendance records
+            const studentAttendance = attendanceRecords.filter(a => a.user.toString() === student._id.toString());
+
+            // Attendance summary for each event (Default = Absent `0`)
+            let attendanceSummary = {};
+            Object.keys(eventMap).forEach(eventId => {
+                const record = studentAttendance.find(a => a.event.toString() === eventId);
+                attendanceSummary[eventMap[eventId]] = record ? 1 : 0; // Present `1`, Absent `0`
+            });
+
+            // Calculate total attendance
+            const totalAttendance = Object.values(attendanceSummary).reduce((sum, val) => sum + val, 0);
+
+            return {
+                studentId: student.studentId,
+                email: student.email,
+                total: totalAttendance,
+                ...attendanceSummary
+            };
+        });
+
+        res.json(report);
+    } catch (error) {
+        console.error("Error generating attendance report:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};

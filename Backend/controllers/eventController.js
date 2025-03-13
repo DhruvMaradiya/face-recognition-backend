@@ -192,17 +192,44 @@ exports.updateEvent = async (req, res) => {
 
 
 // ✅ Delete Event
+//exports.deleteEvent = async (req, res) => {
+//    try {
+//        const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+//
+//        if (!deletedEvent) return res.status(404).json({ message: "Event not found" });
+//
+//        res.json({ message: "Event deleted successfully" });
+//    } catch (error) {
+//        res.status(500).json({ error: error.message });
+//    }
+//};
+
 exports.deleteEvent = async (req, res) => {
     try {
-        const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
 
-        if (!deletedEvent) return res.status(404).json({ message: "Event not found" });
+        // Find the event before deleting it
+        const event = await Event.findById(id);
+        if (!event) {
+            return res.status(404).json({ error: "Event not found" });
+        }
 
-        res.json({ message: "Event deleted successfully" });
+        // Remove the event from all users' registeredEvents array
+        await User.updateMany(
+            { registeredEvents: id },
+            { $pull: { registeredEvents: id } }
+        );
+
+        // Delete the event
+        await Event.findByIdAndDelete(id);
+
+        res.json({ message: "Event deleted successfully and removed from users." });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error deleting event:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 // ✅ Get All Events (Categorized)
 exports.getAllEvents = async (req, res) => {

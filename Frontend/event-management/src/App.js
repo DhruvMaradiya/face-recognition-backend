@@ -43,13 +43,16 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home"; //~ home page
 import CreateEvent from "./pages/CreateEvent"; //~ create event page
 import Navbar from "./components/Navbar"; //~ navbar component
-import EventDetails from "./components/EventDetails"; //~ event details component
+import EventView from "./components/EventView"; //~ event details component
+import EventEdit from "./components/EventEdit"; //~ event details component
 import StudentsList from "./pages/StudentsList"; //~ students list page
 import StudentDetails from "./pages/StudentDetails"; //~ student details page
 import Footer from "./components/Footer";
 import CalendarView from "./pages/CalendarView";
 import ReportPage from "./pages/Dashboard";
 import Dashboard from "./pages/Dashboard";
+
+
 
 const App = () => {
   return (
@@ -63,7 +66,9 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreateEvent />} />
-            <Route path="/admin/event/:id" element={<EventDetails />} />
+            {/* <Route path="/admin/event/:id" element={<EventDetails />} /> */}
+            <Route path="/admin/event/:id" element={<EventView />} />
+        <Route path="/event/edit/:id" element={<EventEdit />} />
             <Route path="/students" element={<StudentsList />} />
             <Route path="/student/:id" element={<StudentDetails />} />
             <Route path="/calendar" element={<CalendarView />} />
