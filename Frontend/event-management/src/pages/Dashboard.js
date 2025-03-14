@@ -370,9 +370,9 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <h1 className="text-3xl font-bold text-[#054e85] mb-8 text-center">
+        {/* <h1 className="text-3xl font-bold text-[#054e85] mb-8 text-center">
           Attendance Dashboard
-        </h1>
+        </h1> */}
 
         {/* Controls Section */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-[#58585a]/20">
