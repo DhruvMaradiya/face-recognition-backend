@@ -200,81 +200,169 @@ function cosineSimilarity(a, b) {
 
 //? Including Date filter
 
+// exports.generateAttendanceReport = async (req, res) => {
+//     try {
+//         const { startDate, endDate } = req.query;
+
+//         let dateFilter = {};
+//         if (startDate && endDate) {
+//             dateFilter.markedAt = {
+//                 $gte: new Date(startDate),
+//                 $lte: new Date(endDate),
+//             };
+//         }
+
+//         // Fetch filtered attendance records and populate user & event names
+//         const attendanceRecords = await Attendance.find(dateFilter)
+//             .populate('user', 'studentId fullName email')
+//             .populate('event', 'name');
+
+//         // Fetch all users (students only)
+//         const students = await User.find({ role: 'student' }).populate('registeredEvents', 'name');
+
+//         // Fetch all events
+//         const events = await Event.find({}, '_id name');
+
+//         // Map attendance for easy lookup
+//         const attendanceMap = {};
+//         attendanceRecords.forEach(record => {
+//             if (!attendanceMap[record.user.studentId]) {
+//                 attendanceMap[record.user.studentId] = {};
+//             }
+//             attendanceMap[record.user.studentId][record.event.name] = record.status;
+//         });
+
+//         // Create spreadsheet data with required columns
+//         const report = [];
+
+//         // Header row
+//         const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
+//         report.push(headerRow);
+
+//         // Data rows
+//         students.forEach(student => {
+//             const row = [
+//                 student.studentId,
+//                 student.fullName,
+//                 student.email,
+//                 student.registeredEvents.length,
+//             ];
+
+//             // Add attendance status for each event
+//             events.forEach(event => {
+//                 row.push(attendanceMap[student.studentId]?.[event.name] || "");
+//             });
+
+//             report.push(row);
+//         });
+
+//         if (req.query.format === "json") {
+//             return res.json(report);
+//         }
+
+//         // Convert JSON to XLSX
+//         const worksheet = XLSX.utils.aoa_to_sheet(report);
+//         const workbook = XLSX.utils.book_new();
+//         XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
+
+//         // Write file buffer
+//         const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+
+//         // Set response headers for file download
+//         res.setHeader('Content-Disposition', 'attachment; filename="Attendance_Report.xlsx"');
+//         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//         res.send(buffer);
+
+//     } catch (error) {
+//         console.error("Error generating attendance report:", error);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+// };
+
+
+
+
+
 exports.generateAttendanceReport = async (req, res) => {
-    try {
-        const { startDate, endDate } = req.query;
+  try {
+      const { startDate, endDate } = req.query;
 
-        let dateFilter = {};
-        if (startDate && endDate) {
-            dateFilter.markedAt = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate),
-            };
-        }
+      let dateFilter = {};
+      if (startDate && endDate) {
+          dateFilter.markedAt = {
+              $gte: new Date(startDate),
+              $lte: new Date(endDate),
+          };
+      }
 
-        // Fetch filtered attendance records and populate user & event names
-        const attendanceRecords = await Attendance.find(dateFilter)
-            .populate('user', 'studentId fullName email')
-            .populate('event', 'name');
+      // Fetch filtered attendance records (excluding null users) and populate data
+      const attendanceRecords = await Attendance.find({
+          ...dateFilter,
+          user: { $ne: null }  // Exclude records with null users
+      })
+          .populate('user', 'studentId fullName email')
+          .populate('event', 'name');
 
-        // Fetch all users (students only)
-        const students = await User.find({ role: 'student' }).populate('registeredEvents', 'name');
+      // Fetch all users (students only)
+      const students = await User.find({ role: 'student' }).populate('registeredEvents', 'name');
 
-        // Fetch all events
-        const events = await Event.find({}, '_id name');
+      // Fetch all events
+      const events = await Event.find({}, '_id name');
 
-        // Map attendance for easy lookup
-        const attendanceMap = {};
-        attendanceRecords.forEach(record => {
-            if (!attendanceMap[record.user.studentId]) {
-                attendanceMap[record.user.studentId] = {};
-            }
-            attendanceMap[record.user.studentId][record.event.name] = record.status;
-        });
+      // Map attendance for easy lookup
+      const attendanceMap = {};
+      attendanceRecords.forEach(record => {
+          if (!record.user) return; // Skip records with null users (extra safety)
 
-        // Create spreadsheet data with required columns
-        const report = [];
+          if (!attendanceMap[record.user.studentId]) {
+              attendanceMap[record.user.studentId] = {};
+          }
+          attendanceMap[record.user.studentId][record.event.name] = record.status;
+      });
 
-        // Header row
-        const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
-        report.push(headerRow);
+      // Create spreadsheet data with required columns
+      const report = [];
 
-        // Data rows
-        students.forEach(student => {
-            const row = [
-                student.studentId,
-                student.fullName,
-                student.email,
-                student.registeredEvents.length,
-            ];
+      // Header row
+      const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
+      report.push(headerRow);
 
-            // Add attendance status for each event
-            events.forEach(event => {
-                row.push(attendanceMap[student.studentId]?.[event.name] || "");
-            });
+      // Data rows
+      students.forEach(student => {
+          const row = [
+              student.studentId,
+              student.fullName,
+              student.email,
+              student.registeredEvents.length,
+          ];
 
-            report.push(row);
-        });
+          // Add attendance status for each event
+          events.forEach(event => {
+              row.push(attendanceMap[student.studentId]?.[event.name] || "");
+          });
 
-        if (req.query.format === "json") {
-            return res.json(report);
-        }
+          report.push(row);
+      });
 
-        // Convert JSON to XLSX
-        const worksheet = XLSX.utils.aoa_to_sheet(report);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
+      if (req.query.format === "json") {
+          return res.json(report);
+      }
 
-        // Write file buffer
-        const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+      // Convert JSON to XLSX
+      const worksheet = XLSX.utils.aoa_to_sheet(report);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
 
-        // Set response headers for file download
-        res.setHeader('Content-Disposition', 'attachment; filename="Attendance_Report.xlsx"');
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.send(buffer);
+      // Write file buffer
+      const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
 
-    } catch (error) {
-        console.error("Error generating attendance report:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+      // Set response headers for file download
+      res.setHeader('Content-Disposition', 'attachment; filename="Attendance_Report.xlsx"');
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.send(buffer);
+
+  } catch (error) {
+      console.error("Error generating attendance report:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
 };
