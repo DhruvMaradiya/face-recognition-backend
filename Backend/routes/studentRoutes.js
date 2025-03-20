@@ -7,6 +7,7 @@ router.get('/students/:id', studentController.getStudentById);
 router.get('/students/email/:email', studentController.getStudentByEmail);
 router.post('/students/register-to-event', studentController.registerStudentToEvent);
 router.post('/students/remove-from-event', studentController.removeStudentFromEvent);
+router.delete('/delete/:userId', studentController.deleteUser);
 
 
 module.exports = router;

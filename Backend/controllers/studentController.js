@@ -1,5 +1,5 @@
 const User = require('../models/User'); // Import User model
-
+const Attendance = require('../models/Attendance');
 const Event = require("../models/Event");
 //! without paginations
 // // Get all students with full attributes
@@ -167,4 +167,36 @@ exports.removeStudentFromEvent = async (req, res) => {
         console.error("Error removing student from event:", error);
         res.status(500).json({ error: "Internal server error" });
     }
+};
+
+
+
+exports.deleteUser = async (req, res) => {
+  try {
+      const { userId } = req.params;
+
+      // Find user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
+
+      // Remove user from all registered events
+      await Event.updateMany(
+          { registeredStudents: userId },
+          { $pull: { registeredStudents: userId } }
+      );
+
+      // Delete user's attendance records
+      await Attendance.deleteMany({ user: userId });
+
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+
+      res.status(200).json({ message: "User deleted successfully, along with associated records." });
+
+  } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
 };

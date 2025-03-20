@@ -283,86 +283,191 @@ function cosineSimilarity(a, b) {
 
 
 
+// exports.generateAttendanceReport = async (req, res) => {
+//   try {
+//       const { startDate, endDate } = req.query;
+
+//       let dateFilter = {};
+//       if (startDate && endDate) {
+//           dateFilter.markedAt = {
+//               $gte: new Date(startDate),
+//               $lte: new Date(endDate),
+//           };
+//       }
+
+//       // Fetch filtered attendance records (excluding null users) and populate data
+//       const attendanceRecords = await Attendance.find({
+//           ...dateFilter,
+//           user: { $ne: null }  // Exclude records with null users
+//       })
+//           .populate('user', 'studentId fullName email')
+//           .populate('event', 'name');
+
+//       // Fetch all users (students only)
+//       const students = await User.find({ role: 'student' }).populate('registeredEvents', 'name');
+
+//       // Fetch all events
+//       const events = await Event.find({}, '_id name');
+
+//       // Map attendance for easy lookup
+//       const attendanceMap = {};
+//       attendanceRecords.forEach(record => {
+//           if (!record.user) return; // Skip records with null users (extra safety)
+
+//           if (!attendanceMap[record.user.studentId]) {
+//               attendanceMap[record.user.studentId] = {};
+//           }
+//           attendanceMap[record.user.studentId][record.event.name] = record.status;
+//       });
+
+//       // Create spreadsheet data with required columns
+//       const report = [];
+
+//       // Header row
+//       const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
+//       report.push(headerRow);
+
+//       // Data rows
+//       students.forEach(student => {
+//           const row = [
+//               student.studentId,
+//               student.fullName,
+//               student.email,
+//               student.registeredEvents.length,
+//           ];
+
+//           // Add attendance status for each event
+//           events.forEach(event => {
+//               row.push(attendanceMap[student.studentId]?.[event.name] || "");
+//           });
+
+//           report.push(row);
+//       });
+
+//       if (req.query.format === "json") {
+//           return res.json(report);
+//       }
+
+//       // Convert JSON to XLSX
+//       const worksheet = XLSX.utils.aoa_to_sheet(report);
+//       const workbook = XLSX.utils.book_new();
+//       XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
+
+//       // Write file buffer
+//       const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+
+//       // Set response headers for file download
+//       res.setHeader('Content-Disposition', 'attachment; filename="Attendance_Report.xlsx"');
+//       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//       res.send(buffer);
+
+//   } catch (error) {
+//       console.error("Error generating attendance report:", error);
+//       res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
 exports.generateAttendanceReport = async (req, res) => {
   try {
-      const { startDate, endDate } = req.query;
+    const { startDate, endDate, eventName } = req.query;
 
-      let dateFilter = {};
-      if (startDate && endDate) {
-          dateFilter.markedAt = {
-              $gte: new Date(startDate),
-              $lte: new Date(endDate),
-          };
+    // Build date filter
+    let dateFilter = {};
+    if (startDate && endDate) {
+      dateFilter.markedAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    // Fetch events (filtered by eventName if provided, case-insensitive)
+    let eventQuery = {};
+    if (eventName) {
+      eventQuery.name = { $regex: new RegExp(eventName, "i") }; // Case-insensitive search
+    }
+    const events = await Event.find(eventQuery, "_id name");
+
+    if (eventName && events.length === 0) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Fetch filtered attendance records (excluding null users)
+    const attendanceRecords = await Attendance.find({
+      ...dateFilter,
+      user: { $ne: null }, // Exclude records with null users
+      ...(eventName ? { event: { $in: events.map(e => e._id) } } : {}), // Filter by event if specified
+    })
+      .populate("user", "studentId fullName email")
+      .populate("event", "name");
+
+    // Fetch all students
+    const students = await User.find({ role: "student" }).populate("registeredEvents", "name");
+
+    // Map attendance for easy lookup
+    const attendanceMap = {};
+    attendanceRecords.forEach(record => {
+      if (!record.user) return; // Extra safety for null users
+
+      if (!attendanceMap[record.user.studentId]) {
+        attendanceMap[record.user.studentId] = {};
       }
+      attendanceMap[record.user.studentId][record.event.name] = record.status;
+    });
 
-      // Fetch filtered attendance records (excluding null users) and populate data
-      const attendanceRecords = await Attendance.find({
-          ...dateFilter,
-          user: { $ne: null }  // Exclude records with null users
-      })
-          .populate('user', 'studentId fullName email')
-          .populate('event', 'name');
+    // Create spreadsheet data with required columns
+    const report = [];
 
-      // Fetch all users (students only)
-      const students = await User.find({ role: 'student' }).populate('registeredEvents', 'name');
+    // Header row
+    const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
+    report.push(headerRow);
 
-      // Fetch all events
-      const events = await Event.find({}, '_id name');
+    // Data rows
+    students.forEach(student => {
+      const row = [
+        student.studentId,
+        student.fullName,
+        student.email,
+        student.registeredEvents.length,
+      ];
 
-      // Map attendance for easy lookup
-      const attendanceMap = {};
-      attendanceRecords.forEach(record => {
-          if (!record.user) return; // Skip records with null users (extra safety)
-
-          if (!attendanceMap[record.user.studentId]) {
-              attendanceMap[record.user.studentId] = {};
-          }
-          attendanceMap[record.user.studentId][record.event.name] = record.status;
+      // Add attendance status for each event
+      events.forEach(event => {
+        row.push(attendanceMap[student.studentId]?.[event.name] || "");
       });
 
-      // Create spreadsheet data with required columns
-      const report = [];
+      report.push(row);
+    });
 
-      // Header row
-      const headerRow = ["Student ID", "Full Name", "Email", "Total Registered Events", ...events.map(event => event.name)];
-      report.push(headerRow);
+    if (req.query.format === "json") {
+      return res.json(report);
+    }
 
-      // Data rows
-      students.forEach(student => {
-          const row = [
-              student.studentId,
-              student.fullName,
-              student.email,
-              student.registeredEvents.length,
-          ];
+    // Convert JSON to XLSX
+    const worksheet = XLSX.utils.aoa_to_sheet(report);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
 
-          // Add attendance status for each event
-          events.forEach(event => {
-              row.push(attendanceMap[student.studentId]?.[event.name] || "");
-          });
+    // Write file buffer
+    const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
 
-          report.push(row);
-      });
-
-      if (req.query.format === "json") {
-          return res.json(report);
-      }
-
-      // Convert JSON to XLSX
-      const worksheet = XLSX.utils.aoa_to_sheet(report);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
-
-      // Write file buffer
-      const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-
-      // Set response headers for file download
-      res.setHeader('Content-Disposition', 'attachment; filename="Attendance_Report.xlsx"');
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.send(buffer);
-
+    // Set response headers for file download
+    res.setHeader("Content-Disposition", `attachment; filename="Attendance_Report${eventName ? `_${eventName}` : ""}.xlsx"`);
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.send(buffer);
   } catch (error) {
-      console.error("Error generating attendance report:", error);
-      res.status(500).json({ error: "Internal server error" });
+    console.error("Error generating attendance report:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
