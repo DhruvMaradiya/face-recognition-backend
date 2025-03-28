@@ -139,36 +139,40 @@ exports.registerStudentToEvent = async (req, res) => {
 
 
 exports.removeStudentFromEvent = async (req, res) => {
-    const { email, eventId } = req.body;
+  const { email, eventId } = req.body;
 
-    console.log(`Processing removal of ${email} from event ${eventId}`);
+  console.log(`Processing removal of ${email} from event ${eventId}`);
 
-    try {
-        const student = await User.findOne({ email, role: 'student' });
-        if (!student) {
-            return res.status(404).json({ error: "Student not found" });
-        }
-
-        console.log(`Student found: ${student.fullName}`);
-
-        // Remove event from student's registeredEvents array
-        student.registeredEvents = student.registeredEvents.filter(event => event.toString() !== eventId);
-        await student.save();
-        console.log(`Event removed from student's registeredEvents`);
-
-        // Remove student from event's registeredStudents array
-        await Event.findByIdAndUpdate(eventId, {
-            $pull: { registeredStudents: student._id }
-        });
-
-        console.log(`Student removed from event's registeredStudents`);
-        res.json({ message: "Student removed successfully from event." });
-    } catch (error) {
-        console.error("Error removing student from event:", error);
-        res.status(500).json({ error: "Internal server error" });
+  try {
+    const student = await User.findOne({ email, role: 'student' });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
     }
-};
 
+    console.log(`Student found: ${student.fullName}`);
+
+    // 1. Remove event from student's registeredEvents array
+    student.registeredEvents = student.registeredEvents.filter(event => event.toString() !== eventId);
+    await student.save();
+    console.log(`Event removed from student's registeredEvents`);
+
+    // 2. Remove student from event's registeredStudents array
+    await Event.findByIdAndUpdate(eventId, {
+      $pull: { registeredStudents: student._id }
+    });
+    console.log(`Student removed from event's registeredStudents`);
+
+    // 3. Delete student's attendance records for that event
+    const result = await Attendance.deleteMany({ user: student._id, event: eventId });
+    console.log(`Deleted ${result.deletedCount} attendance record(s)`);
+
+    res.json({ message: "Student removed successfully from event and related attendance deleted." });
+
+  } catch (error) {
+    console.error("Error removing student from event:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 exports.deleteUser = async (req, res) => {

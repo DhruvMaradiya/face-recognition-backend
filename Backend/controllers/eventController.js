@@ -2,6 +2,7 @@ const Event = require("../models/Event");
 const User = require("../models/User");
 const csvParser = require("csv-parser");
 const fs = require("fs");
+const moment = require('moment-timezone')
 
 // ✅ Helper Function: Parse CSV File
 const parseCSV = (filePath) => {
@@ -90,7 +91,9 @@ const parseCSV = (filePath) => {
 
 exports.createEvent = async (req, res) => {
     try {
-        let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;
+        let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;        
+        startTime = moment.utc(startTime).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
+        endTime = moment.utc(endTime).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
 
         // Convert creator email to ObjectId
         const creatorUser = await User.findOne({ email: creator });
@@ -124,7 +127,6 @@ exports.createEvent = async (req, res) => {
             creator: creatorUser._id, // Store as ObjectId
             registeredStudents: studentIds
         });
-
         await newEvent.save();
 
         // ✅ Update `registeredEvents` for each student

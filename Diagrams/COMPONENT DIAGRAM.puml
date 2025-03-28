@@ -1,0 +1,37 @@
+@startuml
+
+'=============================
+' COMPONENT DIAGRAM
+'=============================
+package "Admin Dashboard" {
+  [Event Manager]
+  [Report Generator]
+  [Student Manager]
+}
+
+package "Mobile App" {
+  [Login Module]
+  [Attendance Marker]
+}
+
+package "Backend Server" {
+  [API Controller]
+  [Auth Service]
+  [Attendance Service]
+  [CSV Processor]
+}
+
+package "Database" {
+  [User Collection]
+  [Event Collection]
+  [Attendance Collection]
+}
+
+[Admin Dashboard] --> [API Controller]
+[Mobile App] --> [API Controller]
+[API Controller] --> [Auth Service]
+[API Controller] --> [Attendance Service]
+[API Controller] --> [CSV Processor]
+[Attendance Service] --> [Database]
+
+@enduml

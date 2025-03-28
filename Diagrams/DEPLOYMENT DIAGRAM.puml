@@ -1,0 +1,26 @@
+@startuml
+
+'=============================
+' DEPLOYMENT DIAGRAM
+'=============================
+node "Student Phone" {
+  component "Mobile App"
+}
+
+node "Admin Browser" {
+  component "Dashboard UI"
+}
+
+node "Web Server" {
+  component "Express Server"
+}
+
+node "MongoDB Cluster" {
+  database "MongoDB"
+}
+
+"Mobile App" --> "Express Server"
+"Dashboard UI" --> "Express Server"
+"Express Server" --> "MongoDB"
+
+@enduml

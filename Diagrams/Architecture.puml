@@ -1,0 +1,41 @@
+@startuml
+
+!define RECTANGLE class
+skinparam componentStyle rectangle
+
+title 📐 High-Level System Architecture
+
+node "Mobile App (Student)" {
+  [React Native App] as MobileApp
+}
+
+node "Admin Dashboard (Web)" {
+  [React Web Dashboard] as Dashboard
+}
+
+node "Backend Server\n(Node.js + Express)" {
+  [Auth API]
+  [Event API]
+  [Attendance API]
+}
+
+database "MongoDB Database" {
+  [Users Collection]
+  [Events Collection]
+  [Attendance Collection]
+}
+
+MobileApp --> [Auth API] : Login / Sign up
+MobileApp --> [Event API] : Fetch Events
+MobileApp --> [Attendance API] : Mark Attendance
+
+Dashboard --> [Event API] : Create / Edit Events
+Dashboard --> [Attendance API] : View Reports
+Dashboard --> [Auth API] : Admin Login
+
+[Auth API] --> [Users Collection]
+[Event API] --> [Events Collection]
+[Attendance API] --> [Attendance Collection]
+[Attendance API] --> [Users Collection]
+
+@enduml

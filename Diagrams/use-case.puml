@@ -1,0 +1,25 @@
+@startuml
+
+'=============================
+' USE CASE DIAGRAM
+'=============================
+left to right direction
+actor Admin
+actor Student
+
+rectangle "Attendance System" {
+  Admin --> (Create Event)
+  Admin --> (Upload CSV of Emails)
+  Admin --> (Generate Report)
+  Admin --> (Manage Students)
+  Admin --> (Manage Events)
+  Admin --> (Calendar View)
+
+  Student --> (Sign Up / Log In)
+  Student --> (View Eligible Events)
+  Student --> (Mark Attendance)
+  (Mark Attendance) --> (Face Verification)
+  (Mark Attendance) --> (GPS Location Verification)
+}
+
+@enduml

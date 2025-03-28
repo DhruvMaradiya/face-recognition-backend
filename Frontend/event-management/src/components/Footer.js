@@ -68,12 +68,12 @@ const Footer = () => {
                 </div>
 
                 {/* Navigation Links */}
-                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
+                {/* <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
                     <FooterLink to="/" label="Home" icon={<Home size={18} />} />
                     <FooterLink to="/students" label="Students" icon={<Users size={18} />} />
                     <FooterLink to="/calendar" label="Calendar" icon={<Calendar size={18} />} />
                     <FooterLink to="/create" label="Create Event" icon={<PlusCircle size={18} />} />
-                </div>
+                </div> */}
             </div>
         </footer>
     );
