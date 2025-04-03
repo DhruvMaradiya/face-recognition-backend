@@ -10,6 +10,8 @@ import {
     X
 } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const StudentsList = () => {
     const [students, setStudents] = useState([]);
     const [page, setPage] = useState(1);
@@ -35,7 +37,7 @@ const StudentsList = () => {
             search: debouncedSearchQuery
         });
 
-        fetch(`http://localhost:5000/students?${queryParams}`)
+        fetch(`${API_URL}/students?${queryParams}`)
             .then((res) => res.json())
             .then((data) => {
                 setStudents(data.students);

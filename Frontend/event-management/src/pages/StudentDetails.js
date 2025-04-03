@@ -360,6 +360,8 @@ import {
     Calendar as CalendarIcon
 } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const StudentDetails = () => {
     const { id } = useParams();
     const [student, setStudent] = useState(null);
@@ -369,7 +371,7 @@ const StudentDetails = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const fetchStudentDetails = () => {
-        fetch(`http://localhost:5000/students/${id}`)
+        fetch(`${API_URL}/students/${id}`)
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to fetch student data");
                 return res.json();
@@ -392,7 +394,7 @@ const StudentDetails = () => {
         if (!window.confirm("Are you sure you want to remove this student from the event?")) return;
 
         try {
-            const response = await fetch("http://localhost:5000/students/remove-from-event", {
+            const response = await fetch(`${API_URL}/students/remove-from-event`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: student.email, eventId })
@@ -416,7 +418,7 @@ const StudentDetails = () => {
         if (!window.confirm("Are you sure you want to delete this student? This action cannot be undone.")) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/delete/${id}`, {
+            const response = await fetch(`${API_URL}/delete/${id}`, {
                 method: "DELETE",
             });
 

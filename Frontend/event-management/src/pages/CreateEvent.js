@@ -111,7 +111,7 @@
 //       delete eventDetails.latitude;
 //       delete eventDetails.longitude;
 
-//       await axios.post("http://localhost:5000/admin/createevent", eventDetails);
+//       await axios.post("${API_URL}/admin/createevent", eventDetails);
 //       navigate("/");
 //     } catch (error) {
 //       console.error("Error creating event:", error);
@@ -421,7 +421,7 @@
 //       delete eventDetails.longitude;
 //       delete eventDetails.locationName;
 
-//       const response = await axios.post("http://localhost:5000/admin/createevent", eventDetails);
+//       const response = await axios.post("${API_URL}/admin/createevent", eventDetails);
 //       navigate("/");
 //     } catch (error) {
 //       console.error("Error creating event:", error);
@@ -714,7 +714,7 @@
 //   useEffect(() => {
 //     const fetchStudents = async () => {
 //       try {
-//         const response = await axios.get("http://localhost:5000/students");
+//         const response = await axios.get("${API_URL}/students");
 //         setAllStudents(response.data.students || []);
 //       } catch (err) {
 //         console.error("Error fetching students:", err);
@@ -819,7 +819,7 @@
 //       delete eventDetails.longitude;
 //       delete eventDetails.locationName;
 
-//       await axios.post("http://localhost:5000/admin/createevent", eventDetails);
+//       await axios.post("${API_URL}/admin/createevent", eventDetails);
 //       navigate("/");
 //     } catch (error) {
 //       console.error("Error creating event:", error);
@@ -1095,7 +1095,7 @@
 //   useEffect(() => {
 //     const fetchStudents = async () => {
 //       try {
-//         const response = await axios.get("http://localhost:5000/students");
+//         const response = await axios.get("${API_URL}/students");
 //         setAllStudents(response.data.students || []);
 //       } catch (err) {
 //         console.error("Error fetching students:", err);
@@ -1269,7 +1269,7 @@
 //       delete eventDetails.endDate;
 //       delete eventDetails.endPeriod;
 
-//       await axios.post("http://localhost:5000/admin/createevent", eventDetails);
+//       await axios.post("${API_URL}/admin/createevent", eventDetails);
 //       navigate("/");
 //     } catch (error) {
 //       console.error("Error creating event:", error);
@@ -1512,6 +1512,9 @@ import {
   User
 } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 const CreateEvent = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -1545,7 +1548,7 @@ const CreateEvent = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/students");
+        const response = await axios.get(`${API_URL}/students`);
         setAllStudents(response.data.students || []);
       } catch (err) {
         console.error("Error fetching students:", err);
@@ -1729,7 +1732,7 @@ const CreateEvent = () => {
       delete eventDetails.endDate;
       delete eventDetails.endPeriod;
 
-      await axios.post("http://localhost:5000/admin/createevent", eventDetails);
+      await axios.post(`${API_URL}/admin/createevent`, eventDetails);
       navigate("/");
     } catch (error) {
       console.error("Error creating event:", error);

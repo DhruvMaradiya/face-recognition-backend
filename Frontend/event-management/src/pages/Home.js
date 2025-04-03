@@ -163,6 +163,8 @@ import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import { Trash2, Eye, PlusCircle } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 const Home = () => {
@@ -172,7 +174,7 @@ const Home = () => {
     const searchTerm = query.get("search")?.toLowerCase() || "";
 
     useEffect(() => {
-        axios.get("http://localhost:5000/admin/events")
+        axios.get(`${API_URL}/admin/events`)
             .then((res) => setEvents(res.data))
             .catch((err) => console.error(err));
     }, []);
@@ -184,7 +186,7 @@ const Home = () => {
 
     const handleDeleteEvent = async (eventId) => {
         try {
-            await axios.delete(`http://localhost:5000/admin/event/${eventId}`);
+            await axios.delete(`${API_URL}/admin/event/${eventId}`);
             const updatedEvents = { ...events };
             Object.keys(updatedEvents).forEach(category => {
                 updatedEvents[category] = updatedEvents[category].filter(

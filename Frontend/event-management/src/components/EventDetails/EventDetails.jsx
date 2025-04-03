@@ -4,6 +4,8 @@ import EventDetailsView from "./EventDetailsView";
 import EventEditForm from "./EventEditForm";
 import Papa from "papaparse";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const EventDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -14,7 +16,7 @@ const EventDetails = () => {
     const [newEmail, setNewEmail] = useState("");
 
     useEffect(() => {
-        fetch(`http://localhost:5000/admin/event/${id}`)
+        fetch(`${API_URL}/admin/event/${id}`)
             .then((res) => res.json())
             .then((data) => {
                 setEvent(data);
@@ -34,7 +36,7 @@ const EventDetails = () => {
 
     const handleDelete = async () => {
         if (!window.confirm("Are you sure you want to delete this event?")) return;
-        const response = await fetch(`http://localhost:5000/admin/event/${id}`, { method: "DELETE" });
+        const response = await fetch(`${API_URL}/admin/event/${id}`, { method: "DELETE" });
         if (!response.ok) throw new Error("Failed to delete event");
         alert("Event deleted successfully!");
         navigate("/");

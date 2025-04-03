@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Calendar, Clock, MapPin, Users, ArrowLeft, Edit, Trash2, Search } from "lucide-react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const EventView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const EventView = () => {
     const fetchEvent = async () => {
       try {
         console.log("Fetching event with ID:", id);
-        const res = await fetch(`http://localhost:5000/admin/event/${id}`);
+        const res = await fetch(`${API_URL}/admin/event/${id}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         console.log("Fetched event data:", data); // Log the full response
@@ -31,7 +33,7 @@ const EventView = () => {
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
-      const response = await fetch(`http://localhost:5000/admin/event/${id}`, {
+      const response = await fetch(`${API_URL}/admin/event/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete event");

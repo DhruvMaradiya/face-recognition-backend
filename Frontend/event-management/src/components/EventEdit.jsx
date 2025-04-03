@@ -499,6 +499,7 @@ import {
   Save,
   X,
 } from "lucide-react";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -530,7 +531,7 @@ const EventEdit = () => {
     const fetchEvent = async () => {
       try {
         console.log("Fetching event with ID:", id);
-        const res = await fetch(`http://localhost:5000/admin/event/${id}`);
+        const res = await fetch(`${API_URL}/admin/event/${id}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         console.log("Fetched event data:", data);
@@ -588,7 +589,7 @@ const EventEdit = () => {
 
     try {
       const queryParams = new URLSearchParams({ search: query }).toString();
-      const res = await fetch(`http://localhost:5000/students?${queryParams}`);
+      const res = await fetch(`${API_URL}/students?${queryParams}`);
       if (!res.ok) throw new Error("Failed to fetch students");
       const data = await res.json();
       setStudentSuggestions(data.students || []);
@@ -748,7 +749,7 @@ const EventEdit = () => {
         registeredStudents: emails,
       };
 
-      const response = await fetch(`http://localhost:5000/admin/event/${id}`, {
+      const response = await fetch(`${API_URL}/admin/event/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -777,14 +778,14 @@ const EventEdit = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:5000/students/email/${email}`
+        `${API_URL}/students/email/${email}`
       );
       if (!response.ok) {
         alert("Student not found");
         return;
       }
       const registerResponse = await fetch(
-        "http://localhost:5000/students/register-to-event",
+        `${API_URL}/students/register-to-event`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -809,7 +810,7 @@ const EventEdit = () => {
     if (!window.confirm(`Are you sure you want to remove ${email}?`)) return;
     try {
       const response = await fetch(
-        "http://localhost:5000/students/remove-from-event",
+        `${API_URL}/students/remove-from-event`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

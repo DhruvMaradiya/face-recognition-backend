@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Papa from "papaparse";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const EventDetails = () => {
     const { id } = useParams();
@@ -11,7 +12,7 @@ const EventDetails = () => {
     const [emails, setEmails] = useState([]);  // For parsed emails
 
     useEffect(() => {
-        fetch(`http://localhost:5000/admin/event/${id}`)
+        fetch(`${API_URL}/admin/event/${id}`)
             .then((res) => res.json())
             .then((data) => {
                 setEvent(data);
@@ -56,7 +57,7 @@ const EventDetails = () => {
                 registeredStudents: emails // Send updated student list
             };
 
-            const response = await fetch(`http://localhost:5000/admin/event/${id}`, {
+            const response = await fetch(`${API_URL}/admin/event/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

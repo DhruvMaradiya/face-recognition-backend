@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const CalendarView = () => {
     const [events, setEvents] = useState([]);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -13,7 +15,7 @@ const CalendarView = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/admin/events");
+                const response = await axios.get(`${API_URL}/admin/events`);
                 const { ongoing = [], upcoming = [], past = [] } = response.data || {};
                 // Flatten all events into a single array
                 const allEvents = [...ongoing, ...upcoming, ...past];

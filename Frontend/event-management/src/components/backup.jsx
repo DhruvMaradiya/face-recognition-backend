@@ -484,6 +484,9 @@ import {
   Save,
   X,
 } from "lucide-react";
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -496,7 +499,7 @@ const EventDetails = () => {
   const [showTimePicker, setShowTimePicker] = useState({ start: false, end: false });
 
   useEffect(() => {
-    fetch(`http://localhost:5000/admin/event/${id}`)
+    fetch(`${API_URL}/admin/event/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setEvent(data);
@@ -526,7 +529,7 @@ const EventDetails = () => {
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
-      const response = await fetch(`http://localhost:5000/admin/event/${id}`, {
+      const response = await fetch(`${API_URL}/admin/event/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete event");
@@ -562,7 +565,7 @@ const EventDetails = () => {
         registeredStudents: emails,
       };
 
-      const response = await fetch(`http://localhost:5000/admin/event/${id}`, {
+      const response = await fetch(`${API_URL}/admin/event/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

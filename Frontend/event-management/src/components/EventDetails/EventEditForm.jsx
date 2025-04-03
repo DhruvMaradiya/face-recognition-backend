@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import TimePicker from "./TimePicker"; // Ensure this is correctly imported
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const EventEditForm = ({ formData, setFormData, emails, setEmails, setEditMode, eventId, setEvent, newEmail, setNewEmail }) => {
     const [showTimePicker, setShowTimePicker] = useState({ start: false, end: false });
 
@@ -34,7 +36,7 @@ const EventEditForm = ({ formData, setFormData, emails, setEmails, setEditMode, 
             registeredStudents: emails
         };
 
-        const response = await fetch(`http://localhost:5000/admin/event/${eventId}`, {
+        const response = await fetch(`${API_URL}/admin/event/${eventId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
