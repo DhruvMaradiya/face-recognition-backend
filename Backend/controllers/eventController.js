@@ -18,80 +18,10 @@ const parseCSV = (filePath) => {
     });
 };
 
-// ✅ Create Event
-// exports.createEvent = async (req, res) => {
-//     try {
-//         const { name, description, startTime, endTime, latitude, longitude, radius, bufferMinutes, creator } = req.body;
-//         const location = { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] };
-
-//         let registeredStudents = [];
-
-//         if (req.file) {
-//             const filePath = req.file.path;
-//             const emails = await parseCSV(filePath);
-//             const students = await User.find({ email: { $in: emails } }).select("_id");
-//             registeredStudents = students.map(student => student._id);
-//             fs.unlinkSync(filePath); // Delete temporary file
-//         }
-
-//         const newEvent = new Event({ name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents });
-//         await newEvent.save();
-
-//         res.status(201).json({ message: "Event created successfully", event: newEvent });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
-
-
-
-// exports.createEvent = async (req, res) => {
-//     try {
-//         let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;
-
-//         // Convert creator email to ObjectId
-//         const creatorUser = await User.findOne({ email: creator });
-//         if (!creatorUser) {
-//             return res.status(400).json({ error: "Creator email not found" });
-//         }
-
-//         // Convert student emails to ObjectIds
-//         const students = await User.find({ email: { $in: registeredStudents } }, "_id");
-//         if (students.length !== registeredStudents.length) {
-//             return res.status(400).json({ error: "One or more student emails not found" });
-//         }
-
-//         // Extract ObjectIds
-//         const studentIds = students.map(student => student._id);
-
-//         // Ensure location coordinates are numbers
-//         if (!Array.isArray(location.coordinates) || location.coordinates.length !== 2) {
-//             return res.status(400).json({ error: "Invalid location coordinates format" });
-//         }
-
-//         const newEvent = new Event({
-//             name,
-//             description,
-//             startTime,
-//             endTime,
-//             location,
-//             radius,
-//             bufferMinutes,
-//             creator: creatorUser._id, // Store as ObjectId
-//             registeredStudents: studentIds
-//         });
-
-//         await newEvent.save();
-//         res.status(201).json(newEvent);
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
-
 
 exports.createEvent = async (req, res) => {
     try {
-        let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;        
+        let { name, description, startTime, endTime, location, radius, bufferMinutes, creator, registeredStudents } = req.body;
         startTime = moment.utc(startTime).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
         endTime = moment.utc(endTime).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
 
@@ -158,18 +88,6 @@ exports.getEvent = async (req, res) => {
     }
 };
 
-// ✅ Edit Event
-// exports.updateEvent = async (req, res) => {
-//     try {
-//         const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-//         if (!updatedEvent) return res.status(404).json({ message: "Event not found" });
-
-//         res.json({ message: "Event updated successfully", event: updatedEvent });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
 
 exports.updateEvent = async (req, res) => {
     try {
@@ -193,18 +111,7 @@ exports.updateEvent = async (req, res) => {
 };
 
 
-// ✅ Delete Event
-//exports.deleteEvent = async (req, res) => {
-//    try {
-//        const deletedEvent = await Event.findByIdAndDelete(req.params.id);
-//
-//        if (!deletedEvent) return res.status(404).json({ message: "Event not found" });
-//
-//        res.json({ message: "Event deleted successfully" });
-//    } catch (error) {
-//        res.status(500).json({ error: error.message });
-//    }
-//};
+
 
 exports.deleteEvent = async (req, res) => {
     try {

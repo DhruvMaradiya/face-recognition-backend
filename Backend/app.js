@@ -15,7 +15,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 // Middleware
 app.use(cors());  // Enable CORS
 app.use(express.json());
-
+app.use(cors({ origin: "*" }));
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
