@@ -1,0 +1,28 @@
+@startuml
+
+'=============================
+' TIMING DIAGRAM
+'=============================
+timingDiagram {
+  participant Student
+  participant Server
+  participant DB
+
+  Student is Idle
+  Server is Waiting
+  DB is Ready
+
+  Student -> Server : login()
+  Server -> DB : verifyEmail()
+  DB -> Server : result
+  Server -> Student : success
+
+  Student -> Server : markAttendance()
+  Server -> DB : validateFaceAndLocation()
+  DB -> Server : OK
+  Server -> Student : marked
+
+  Student is Idle
+}
+
+@enduml

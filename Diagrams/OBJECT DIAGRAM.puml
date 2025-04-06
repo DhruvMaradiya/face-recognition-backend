@@ -1,0 +1,25 @@
+@startuml
+
+'=============================
+' OBJECT DIAGRAM
+'=============================
+object user1 {
+  id = U001
+  email = john@uwindsor.ca
+  role = student
+}
+
+object event1 {
+  id = E001
+  name = "Orientation"
+}
+
+object attendance1 {
+  id = A001
+  status = "present"
+}
+
+user1 --> attendance1
+event1 --> attendance1
+
+@enduml

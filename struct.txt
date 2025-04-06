@@ -1,0 +1,77 @@
+.
+├── Backend
+│   ├── app.js
+│   ├── app.py
+│   ├── Backend.Dockerfile
+│   ├── controllers
+│   │   ├── adminController.js
+│   │   ├── attendanceController.js
+│   │   ├── authController.js
+│   │   ├── dashboardController.js
+│   │   ├── eventController.js
+│   │   ├── studentController.js
+│   │   └── uploadController.js
+│   ├── middleware
+│   │   └── authmiddleware.js
+│   ├── models
+│   │   ├── Attendance.js
+│   │   ├── Event.js
+│   │   ├── token.js
+│   │   └── User.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── routes
+│   │   ├── attendanceRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── eventRoutes.js
+│   │   ├── profileRoutes.js
+│   │   ├── studentRoutes.js
+│   │   └── uploadRoutes.js
+│   └── uploads
+├── Frontend
+│   └── event-management
+│       ├── 1.txt
+│       ├── Frontend.Dockerfile
+│       ├── node_modules
+│       ├── package.json
+│       ├── package-lock.json
+│       ├── postcss.config.js
+│       ├── public
+│       │   ├── favicon.ico
+│       │   ├── index.html
+│       │   ├── logo192.png
+│       │   ├── logo512.png
+│       │   ├── manifest.json
+│       │   └── robots.txt
+│       ├── README.md
+│       ├── src
+│       │   ├── App.css
+│       │   ├── App.js
+│       │   ├── assets
+│       │   │   ├── logo.jpeg
+│       │   │   └── logo.svg
+│       │   ├── components
+│       │   │   ├── backup.jsx
+│       │   │   ├── EventDetails
+│       │   │   │   ├── EventDetails.jsx
+│       │   │   │   ├── EventDetailsView.jsx
+│       │   │   │   └── EventEditForm.jsx
+│       │   │   ├── EventEdit.jsx
+│       │   │   ├── EventForm.js
+│       │   │   ├── EventView.jsx
+│       │   │   ├── Footer.js
+│       │   │   └── Navbar.js
+│       │   ├── index.css
+│       │   ├── index.js
+│       │   └── pages
+│       │       ├── CalendarView.js
+│       │       ├── CreateEvent.js
+│       │       ├── Dashboard.js
+│       │       ├── Home.js
+│       │       ├── StudentDetails.js
+│       │       └── StudentsList.js
+│       └── tailwind.config.js
+└── struct.txt
+
+16 directories, 59 files

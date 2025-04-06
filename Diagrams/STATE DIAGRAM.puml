@@ -1,0 +1,15 @@
+@startuml
+
+'=============================
+' STATE DIAGRAM
+'=============================
+[*] --> LoggedOut
+LoggedOut --> VerifyingEmail : Login
+VerifyingEmail --> LoggedIn : Email valid
+VerifyingEmail --> Denied : Email invalid
+LoggedIn --> ViewingEvents
+ViewingEvents --> MarkingAttendance : Select event
+MarkingAttendance --> AttendanceMarked : Face & GPS match
+MarkingAttendance --> Rejected : Mismatch
+
+@enduml

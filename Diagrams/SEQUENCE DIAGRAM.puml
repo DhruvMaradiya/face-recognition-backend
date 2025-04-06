@@ -1,0 +1,25 @@
+@startuml
+
+'=============================
+' SEQUENCE DIAGRAM
+'=============================
+actor Admin
+participant Dashboard
+participant Server
+database Database
+
+Admin -> Dashboard : Upload Event + CSV
+Dashboard -> Server : POST /event
+Server -> Database : Save event + participants
+
+Student -> App : Login with Email
+App -> Server : Verify Email
+Server -> Database : Check against CSV
+Server --> App : Return eligible events
+
+Student -> App : Mark Attendance
+App -> Server : Send face scan + location
+Server -> Database : Validate face, location
+Server --> App : Attendance marked
+
+@enduml

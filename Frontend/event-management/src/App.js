@@ -1,25 +1,44 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import CreateEvent from "./pages/CreateEvent";
-import Navbar from "./components/Navbar";
-import EventDetails from "./components/EventDetails";
-import StudentsList from "./pages/StudentsList";
-import StudentDetails from "./pages/StudentDetails";
+import Home from "./pages/Home"; //~ home page
+import CreateEvent from "./pages/CreateEvent"; //~ create event page
+import Navbar from "./components/Navbar"; //~ navbar component
+import EventView from "./components/EventView"; //~ event details component
+import EventEdit from "./components/EventEdit"; //~ event details component
+import StudentsList from "./pages/StudentsList"; //~ students list page
+import StudentDetails from "./pages/StudentDetails"; //~ student details page
+import Footer from "./components/Footer";
+import CalendarView from "./pages/CalendarView";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
+
+
+const App = () => {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/create" element={<CreateEvent />} />
-        <Route path="/admin/event/:id" element={<EventDetails />} />
-        <Route path="/students" element={<StudentsList />} />
-        <Route path="/student/:id" element={<StudentDetails />} />
-      </Routes>
+      <div className="flex flex-col min-h-screen">
+        {/* Fixed Navbar */}
+        <Navbar />
+
+        {/* Scrollable Main Content */}
+        <main className="flex-1 pt-[88px] pb-[104px] bg-gray-100">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<CreateEvent />} />
+            <Route path="/admin/event/:id" element={<EventView />} />
+            <Route path="/event/edit/:id" element={<EventEdit />} />
+            <Route path="/students" element={<StudentsList />} />
+            <Route path="/student/:id" element={<StudentDetails />} />
+            <Route path="/calendar" element={<CalendarView />} />
+            <Route path="/report" element={<Dashboard />}></Route>
+          </Routes>
+        </main>
+
+        {/* Fixed Footer */}
+        <Footer />
+      </div>
     </Router>
   );
-}
+};
 
 export default App;

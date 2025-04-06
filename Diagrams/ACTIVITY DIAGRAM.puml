@@ -1,0 +1,23 @@
+@startuml
+
+'=============================
+' ACTIVITY DIAGRAM
+'=============================
+start
+:Admin uploads event and CSV;
+:Student signs in;
+if (Email in CSV?) then (yes)
+  :Show eligible events;
+  :Student selects event;
+  :Face scan + GPS check;
+  if (Match & In Range?) then (yes)
+    :Mark Attendance;
+  else (no)
+    :Reject Attendance;
+  endif
+else (no)
+  :Show no access;
+endif
+stop
+
+@enduml
